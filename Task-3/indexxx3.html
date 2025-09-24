@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Styling & JS Project</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f0f2f5;
+    }
+
+    header {
+      background: linear-gradient(90deg, #0adeff, #27d0ff);
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .container {
+      display: flex;
+      justify-content: space-around;
+      padding: 20px;
+      flex-wrap: wrap;
+    }
+
+    .box {
+      flex: 1 1 300px;
+      margin: 10px;
+      padding: 20px;
+      background: white;
+      text-align: center;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+
+    .box:hover {
+      transform: scale(1.03);
+    }
+
+    .carousel img {
+      width: 100%;
+      border-radius: 12px;
+    }
+
+    button {
+      padding: 12px 20px;
+      font-size: 16px;
+      margin: 5px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      opacity: 0.9;
+      transform: scale(1.05);
+    }
+
+    .btn-green {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .btn-blue {
+      background: #3808f5;
+      color: white;
+    }
+
+    .btn-orange {
+      background: #FF9800;
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Advanced Styling & JavaScript Project</h1>
+  </header>
+
+  <div class="container">
+    
+    <div class="box carousel">
+      <h2>Image Carousel</h2>
+      <img id="carouselImage" src="https://picsum.photos/400/200?random=1" alt="Carousel Image">
+      <br><br>
+      <button class="btn-blue" onclick="prevImage()">⬅ Prev</button>
+      <button class="btn-blue" onclick="nextImage()">Next ➡</button>
+    </div>
+
+    <div class="box">
+      <h2>Random Joke Generator</h2>
+      <button class="btn-green" onclick="getJoke()">Get Joke</button>
+      <p id="joke" style="margin-top:15px; font-size:18px; color:#333;"></p>
+    </div>
+
+    <div class="box">
+      <h2>Simple Quiz</h2>
+      <div id="quiz"></div>
+      <button class="btn-orange" onclick="submitQuiz()">Submit Quiz</button>
+      <p id="result" style="font-weight:bold; color:#2E7D32;"></p>
+    </div>
+
+  </div>
+
+  <script>
+    const images = [
+      "https://picsum.photos/400/200?random=1",
+      "https://picsum.photos/400/200?random=2",
+      "https://picsum.photos/400/200?random=3"
+    ];
+    let index = 0;
+
+    function showImage() {
+      document.getElementById("carouselImage").src = images[index];
+    }
+
+    function prevImage() {
+      index = (index - 1 + images.length) % images.length;
+      showImage();
+    }
+
+    function nextImage() {
+      index = (index + 1) % images.length;
+      showImage();
+    }
+
+    async function getJoke() {
+      try {
+        const response = await fetch("https://official-joke-api.appspot.com/random_joke");
+        const data = await response.json();
+        document.getElementById("joke").textContent = `${data.setup} - ${data.punchline}`;
+      } catch (error) {
+        document.getElementById("joke").textContent = "Oops! Could not fetch a joke.";
+      }
+    }
+
+    const quizData = [
+      { 
+        question: "What does CSS stand for?", 
+        options: ["Cascading Style Sheets", "Computer Styled Sections", "Creative Style System"], 
+        answer: "Cascading Style Sheets" 
+      },
+      { 
+        question: "Which language runs in a web browser?", 
+        options: ["Python", "C++", "JavaScript"], 
+        answer: "JavaScript" 
+      }
+    ];
+
+    const quizContainer = document.getElementById("quiz");
+    let output = "";
+
+    quizData.forEach((q, index) => {
+      output += `<p><b>${q.question}</b></p>`;
+      q.options.forEach(option => {
+        output += `
+          <label>
+            <input type="radio" name="q${index}" value="${option}"> ${option}
+          </label><br>`;
+      });
+    });
+
+    quizContainer.innerHTML = output;
+
+    function submitQuiz() {
+      let score = 0;
+      quizData.forEach((q, index) => {
+        const selected = document.querySelector(`input[name="q${index}"]:checked`);
+        if (selected && selected.value === q.answer) {
+          score++;
+        }
+      });
+      document.getElementById("result").textContent = `You scored ${score}/${quizData.length}`;
+    }
+  </script>
+</body>
+</html>
